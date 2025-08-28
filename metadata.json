@@ -1,0 +1,8 @@
+{
+  "name": "Aura AI: Your Mental Wellness Companion",
+  "description": "An AI-powered mental wellness assistant designed for youth. It offers a compassionate chatbot, a personal diary, therapy session analysis, and emergency support features to help navigate life's challenges.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
