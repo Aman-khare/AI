@@ -44,7 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView }) => {
         view={AppView.CHAT}
         currentView={currentView}
         setCurrentView={setCurrentView}
-        label="AI Companion"
+        label="Chats"
         icon={<ChatBubbleIcon />}
       />
       <NavItem
@@ -65,7 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView }) => {
         view={AppView.THERAPY}
         currentView={currentView}
         setCurrentView={setCurrentView}
-        label="Session Analysis"
+        label="Session"
         icon={<MicrophoneIcon />}
       />
       <div className="flex-grow" />

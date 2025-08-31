@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Message } from '../types';
 import { getAIResponseStream } from '../services/geminiService';
@@ -29,8 +28,9 @@ const ChatView: React.FC = () => {
         const newUserMessage: Message = { id: Date.now().toString(), text: currentInput, sender: 'user' };
 
         // FIX: Create history from messages state BEFORE updating it, to send the correct context.
+        // FIX: Explicitly cast role to 'user' | 'model' to fix TypeScript type inference error.
         const history = messages.map(msg => ({
-            role: msg.sender === 'ai' ? 'model' : 'user',
+            role: (msg.sender === 'ai' ? 'model' : 'user') as 'user' | 'model',
             parts: [{ text: msg.text }]
         }));
 
