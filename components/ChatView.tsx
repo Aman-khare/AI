@@ -5,7 +5,7 @@ import { useSpeech } from '../hooks/useSpeech';
 
 const ChatView: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([
-        { id: '1', text: "Hello! I'm Aura, your AI companion. How are you feeling today?", sender: 'ai' }
+        { id: '1', text: "Hello! I'm your AI companion. How are you feeling today?", sender: 'ai' }
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);

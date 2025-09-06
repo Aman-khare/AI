@@ -10,6 +10,7 @@ import EmergencyView from './components/EmergencyView';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>(AppView.CHAT);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
 
   const renderView = () => {
     switch (currentView) {
@@ -30,7 +31,12 @@ const App: React.FC = () => {
 
   return (
     <div className="flex h-screen w-full bg-gray-900 text-gray-100 font-sans">
-      <Sidebar currentView={currentView} setCurrentView={setCurrentView} />
+      <Sidebar
+        currentView={currentView}
+        setCurrentView={setCurrentView}
+        isSidebarExpanded={isSidebarExpanded}
+        setIsSidebarExpanded={setIsSidebarExpanded}
+      />
       <main className="flex-1 h-full overflow-y-auto">
         {renderView()}
       </main>

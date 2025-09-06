@@ -5,16 +5,18 @@ import { AppView } from '../types';
 interface SidebarProps {
   currentView: AppView;
   setCurrentView: (view: AppView) => void;
+  isSidebarExpanded: boolean;
+  setIsSidebarExpanded: (isExpanded: boolean) => void;
 }
 
 const NavItem: React.FC<{
   view: AppView;
   currentView: AppView;
   setCurrentView: (view: AppView) => void;
-  // FIX: Replaced JSX.Element with React.ReactElement to resolve namespace error.
   icon: React.ReactElement;
   label: string;
-}> = ({ view, currentView, setCurrentView, icon, label }) => {
+  isSidebarExpanded: boolean;
+}> = ({ view, currentView, setCurrentView, icon, label, isSidebarExpanded }) => {
   const isActive = currentView === view;
   return (
     <button
@@ -23,22 +25,23 @@ const NavItem: React.FC<{
         isActive
           ? 'bg-blue-600 text-white shadow-lg'
           : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-      }`}
+      } ${!isSidebarExpanded && 'justify-center'}`}
+      aria-label={label}
     >
-      <span className="mr-4">{icon}</span>
-      <span>{label}</span>
+      <span className={isSidebarExpanded ? 'mr-4' : ''}>{icon}</span>
+      {isSidebarExpanded && <span>{label}</span>}
     </button>
   );
 };
 
-const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView }) => {
+const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView, isSidebarExpanded, setIsSidebarExpanded }) => {
   return (
-    <nav className="w-64 h-full bg-gray-800 p-4 flex flex-col space-y-2 border-r border-gray-700 shadow-2xl">
-      <div className="flex items-center mb-6">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-400 mr-2" viewBox="0 0 20 20" fill="currentColor">
+    <nav className={`h-full bg-gray-800 p-4 flex flex-col space-y-2 border-r border-gray-700 shadow-2xl transition-all duration-300 ease-in-out ${isSidebarExpanded ? 'w-64' : 'w-20'}`}>
+      <div className={`flex items-center mb-6 h-8 ${!isSidebarExpanded && 'justify-center'}`}>
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 7a1 1 0 00-2 0v1a1 1 0 002 0V7zm4 0a1 1 0 00-2 0v1a1 1 0 002 0V7zm4 0a1 1 0 00-2 0v1a1 1 0 002 0V7z" clipRule="evenodd" />
         </svg>
-        <h1 className="text-xl font-bold text-white">Aura AI</h1>
+        {isSidebarExpanded && <h1 className="text-xl font-bold text-white ml-2">AI</h1>}
       </div>
       <NavItem
         view={AppView.CHAT}
@@ -46,6 +49,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView }) => {
         setCurrentView={setCurrentView}
         label="Chats"
         icon={<ChatBubbleIcon />}
+        isSidebarExpanded={isSidebarExpanded}
       />
       <NavItem
         view={AppView.DIARY}
@@ -53,6 +57,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView }) => {
         setCurrentView={setCurrentView}
         label="Personal Diary"
         icon={<BookOpenIcon />}
+        isSidebarExpanded={isSidebarExpanded}
       />
       <NavItem
         view={AppView.CALENDAR}
@@ -60,6 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView }) => {
         setCurrentView={setCurrentView}
         label="Calendar"
         icon={<CalendarIcon />}
+        isSidebarExpanded={isSidebarExpanded}
       />
       <NavItem
         view={AppView.THERAPY}
@@ -67,6 +73,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView }) => {
         setCurrentView={setCurrentView}
         label="Session"
         icon={<MicrophoneIcon />}
+        isSidebarExpanded={isSidebarExpanded}
       />
       <div className="flex-grow" />
       <NavItem
@@ -75,7 +82,15 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView }) => {
         setCurrentView={setCurrentView}
         label="Emergency"
         icon={<ExclamationIcon />}
+        isSidebarExpanded={isSidebarExpanded}
       />
+       <button
+        onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}
+        className="flex items-center justify-center w-full mt-2 py-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white transition-colors"
+        aria-label={isSidebarExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
+      >
+        {isSidebarExpanded ? <ChevronDoubleLeftIcon /> : <ChevronDoubleRightIcon />}
+      </button>
     </nav>
   );
 };
@@ -104,6 +119,18 @@ const MicrophoneIcon = () => (
 const ExclamationIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+    </svg>
+);
+
+const ChevronDoubleLeftIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+    </svg>
+);
+
+const ChevronDoubleRightIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
     </svg>
 );
 
