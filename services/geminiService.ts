@@ -1,23 +1,34 @@
-import { GoogleGenAI, Chat } from "@google/genai";
+
+import { GoogleGenAI, Chat, GenerateContentResponse } from "@google/genai";
 
 const API_KEY = process.env.API_KEY;
 
-if (!API_KEY) {
-  throw new Error("API_KEY environment variable not set");
+let ai: GoogleGenAI | null = null;
+if (API_KEY) {
+  ai = new GoogleGenAI({ apiKey: API_KEY });
+} else {
+  console.warn("API_KEY environment variable not set. AI features will be disabled.");
 }
 
-const ai = new GoogleGenAI({ apiKey: API_KEY });
-const model = ai.chats.create({
-  model: 'gemini-2.5-flash',
-});
-
+async function createErrorStream(message: string): Promise<AsyncGenerator<GenerateContentResponse>> {
+    async function* generator(): AsyncGenerator<GenerateContentResponse> {
+        // The consumer expects an object with a .text property.
+        // We cast to satisfy typing, as this is a mock response.
+        yield { text: message } as any as GenerateContentResponse;
+    }
+    return generator();
+}
 
 export const getAIResponseStream = async (
     history: { role: 'user' | 'model'; parts: { text: string }[] }[],
     newMessage: string,
     diaryEntries?: string,
     therapyAnalysis?: string
-) => {
+): Promise<AsyncGenerator<GenerateContentResponse>> => {
+    if (!ai) {
+        return createErrorStream("AI service is not configured. An API key is required to use this feature.");
+    }
+    
     const today = new Date();
     const formattedDate = today.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -40,6 +51,9 @@ export const getAIResponseStream = async (
 };
 
 export const getSimpleAIResponse = async (prompt: string): Promise<string> => {
+    if (!ai) {
+        return "AI service is not configured. An API key is required to use this feature.";
+    }
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
